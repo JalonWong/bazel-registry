@@ -1,0 +1,12 @@
+""" Module """
+module(name = "rules_arm_clang", version = "0.1.0", compatibility_level = 1)
+
+bazel_dep(name = "platforms", version = "0.0.11")
+bazel_dep(name = "rules_cc", version = "0.1.1")
+
+toolchains_ext = use_extension(
+    "//:arm_clang.bzl",
+    "toolchains_ext",
+)
+use_repo(toolchains_ext, "arm_clang_")
+register_toolchains("@arm_clang_//:all")
