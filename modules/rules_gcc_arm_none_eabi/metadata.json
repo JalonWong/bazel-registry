@@ -1,0 +1,15 @@
+{
+    "homepage": "https://github.com/JalonWong/rules_gcc_arm_none_eabi",
+    "maintainers": [
+        {
+            "github": "JalonWong"
+        }
+    ],
+    "repository": [
+        "github:JalonWong/rules_gcc_arm_none_eabi"
+    ],
+    "versions": [
+        "0.1.0"
+    ],
+    "yanked_versions": {}
+}
