@@ -14,34 +14,32 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
     - name: Checkout the module repository
       uses: actions/checkout@v6
       with:
         ref: ${{ inputs.tag_name }}
         persist-credentials: false
-    - name: Prepare Git user
-      run: |
-        git config --global user.email "${{ github.event.head_commit.author.email }}"
-        git config --global user.name "${{ github.event.head_commit.author.name }}"
 
     - name: Checkout Registry
       uses: actions/checkout@v6
       with:
         repository: JalonWong/bazel-registry
-        ref: main
+        ref: v0.1.1
         token: ${{ secrets.GITHUB_TOKEN }}
         path: bazel-registry
         persist-credentials: false
 
     - name: Prepare Registry
-      working-directory: bazel-registry
       run: |
         set -o errexit -o nounset -o pipefail
+        git config --global user.email "${{ github.event.head_commit.author.email }}"
+        git config --global user.name "${{ github.event.head_commit.author.name }}"
+        cd bazel-registry
         git remote add authed-fork https://x-access-token:${{ secrets.publish_token }}@github.com/JalonWong/bazel-registry.git
 
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
     - name: Create entry
       run: python3.13 bazel-registry/tools/publish.py --tag=${{ inputs.tag_name }}
 
