@@ -1,9 +1,16 @@
 {
     "homepage": "https://github.com/JalonWong/rules_arm_clang",
-    "maintainers": [],
-    "repository": [],
+    "maintainers": [
+        {
+            "github": "JalonWong"
+        }
+    ],
+    "repository": [
+        "github:JalonWong/rules_arm_clang"
+    ],
     "versions": [
-        "0.1.0"
+        "0.1.0",
+        "0.1.1"
     ],
     "yanked_versions": {}
 }
