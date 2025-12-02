@@ -24,6 +24,7 @@ def download(url: str) -> bytes:
 
 
 def download_file(url: str, file: Path) -> None:
+    print(f"Download: {url} -> {file}", flush=True)
     with open(file, "wb") as f:
         f.write(download(url))
 
