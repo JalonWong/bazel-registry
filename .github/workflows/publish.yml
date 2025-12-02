@@ -5,27 +5,45 @@ on:
         required: true
         description: The git tag identifying the release the publish to a Bazel registry.
         type: string
+    secrets:
+      publish_token:
+        required: true
+        description: A Personal Access Token (PAT) used for pushing to a registry fork and opening up a pull request.
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
     - name: Checkout the module repository
       uses: actions/checkout@v6
       with:
         ref: ${{ inputs.tag_name }}
-        path: this
         persist-credentials: false
+    - name: Prepare Git user
+      run: |
+        git config --global user.email "${{ github.event.head_commit.author.email }}"
+        git config --global user.name "${{ github.event.head_commit.author.name }}"
 
     - name: Checkout Registry
       uses: actions/checkout@v6
       with:
-        repository:  JalonWong/bazel-registry
+        repository: JalonWong/bazel-registry
         token: ${{ secrets.GITHUB_TOKEN }}
         path: bazel-registry
         persist-credentials: false
 
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-    - run: python3.13 bazel-registry/tools/publish.py --tag=${{ inputs.tag_name }}
+    - name: Prepare Registry
+      working-directory: bazel-registry
+      run: |
+        set -o errexit -o nounset -o pipefail
+        git remote add authed-fork https://x-access-token:${{ secrets.publish_token }}@github.com/JalonWong/bazel-registry.git
+
+    - name: Create entry
+      run: python3.13 bazel-registry/tools/publish.py --tag=${{ inputs.tag_name }}
+
+    - name: Push to Registry
+      working-directory: bazel-registry
+      run: git push --force authed-fork
