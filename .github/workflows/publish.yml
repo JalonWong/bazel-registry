@@ -1,0 +1,31 @@
+on:
+  workflow_call:
+    inputs:
+      tag_name:
+        required: true
+        description: The git tag identifying the release the publish to a Bazel registry.
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the module repository
+      uses: actions/checkout@v6
+      with:
+        ref: ${{ inputs.tag_name }}
+        path: this
+        persist-credentials: false
+
+    - name: Checkout Registry
+      uses: actions/checkout@v6
+      with:
+        repository:  JalonWong/bazel-registry
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: bazel-registry
+        persist-credentials: false
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+    - run: python3.13 bazel-registry/tools/publish.py --tag=${{ inputs.tag_name }}

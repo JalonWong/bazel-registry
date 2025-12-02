@@ -85,10 +85,10 @@ def publish(tag: str | None) -> None:
         tag = get_latest_tag()
 
     ver = tag.replace("v", "")
-    print(f"Publishing: {module_name}@{ver}")
+    print(f"Publishing: {module_name}@{ver}", flush=True)
 
     os.chdir(registry_repo_path)
-    subprocess.run(f"git checkout -b {module_name}@{ver}", check=True)
+    subprocess.run(f"git checkout -b {module_name}-{ver}".split(), check=True)
     os.chdir(module_repo_path)
 
     module = registry_repo_path.joinpath("modules", module_name)
@@ -110,9 +110,9 @@ def publish(tag: str | None) -> None:
     )
 
     os.chdir(registry_repo_path)
-    subprocess.run("git add .", check=True)
-    subprocess.run(f"git commit -m {module_name}@{ver}", check=True)
-    subprocess.run("git push", check=True)
+    subprocess.run("git add .".split(), check=True)
+    subprocess.run(f"git commit -m {module_name}@{ver}".split(), check=True)
+    # subprocess.run("git push --force".split(), check=True)
 
 
 if __name__ == "__main__":
